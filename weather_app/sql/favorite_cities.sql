@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS favorite_cities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    lat REAL NOT NULL,
+    lon REAL NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
