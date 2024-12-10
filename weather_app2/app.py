@@ -113,14 +113,12 @@ def add_city():
     data = request.json
     user_id = data.get('user_id')
     city_name = data.get('city_name')
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
 
-    if not all([user_id, city_name, latitude, longitude]):
+    if not all([user_id, city_name]):
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
-        favorites_model.add_city(user_id, city_name, latitude, longitude)
+        favorites_model.add_city(user_id, city_name, API_KEY)
         return jsonify({"message": f"City {city_name} added to favorites"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
