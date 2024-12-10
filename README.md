@@ -82,109 +82,163 @@ The application uses a centralized logging system for debugging and monitoring:
 
 ## API Routes
 
-### 1. Health Check
-- **Path:** `/api/health`
-- **Request Type:** `GET`
-- **Purpose:** Check if the service is running.
-- **Example:**
-  ```bash
-  curl -X GET http://localhost:5000/api/health
-  ```
-  **Response:**
-  ```json
-  { "status": "healthy" }
-  ```
+### Route: /api/health
+● Request Type: GET
+● Purpose: Checks if the service is running.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 200
+    ■ Content: { "status": "healthy" }
+● Example Request:
+```bash
+curl -X GET http://localhost:5000/api/health
+```
+● Example Response:
+```json
+{
+  "status": "healthy"
+}
+```
 
-### 2. Create Account
-- **Path:** `/auth/create-account`
-- **Request Type:** `POST`
-- **Purpose:** Create a new user account.
-- **Request Body:**
-  ```json
-  {
-    "username": "string",
-    "password": "string"
-  }
-  ```
-- **Response:**
-  ```json
-  { "message": "Account created successfully" }
-  ```
+### Route: /auth/create-account
+● Request Type: POST
+● Purpose: Creates a new user account with a username and password.
+● Request Body:
+  ○ username (String): User's chosen username.
+  ○ password (String): User's chosen password.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 201
+    ■ Content: { "message": "Account created successfully" }
+● Example Request:
+```json
+{
+  "username": "newuser123",
+  "password": "securepassword"
+}
+```
+● Example Response:
+```json
+{
+  "message": "Account created successfully"
+}
+```
 
-### 3. Add Favorite Location
-- **Path:** `/favorites/add`
-- **Request Type:** `POST`
-- **Purpose:** Add a city to a user’s favorites.
-- **Request Body:**
-  ```json
-  {
-    "user_id": "integer",
-    "city_name": "string"
-  }
-  ```
-- **Response:**
-  ```json
-  { "message": "City added to favorites" }
-  ```
+### Route: /favorites/add
+● Request Type: POST
+● Purpose: Adds a city to a user’s favorites.
+● Request Body:
+  ○ user_id (Integer): ID of the user.
+  ○ city_name (String): Name of the city to be added.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 200
+    ■ Content: { "message": "City added to favorites" }
+● Example Request:
+```json
+{
+  "user_id": 1,
+  "city_name": "New York"
+}
+```
+● Example Response:
+```json
+{
+  "message": "City added to favorites"
+}
+```
 
-### 4. Get All Favorites
-- **Path:** `/favorites`
-- **Request Type:** `GET`
-- **Purpose:** Retrieve all favorite cities for a user.
-- **Query Parameters:**
-  - `user_id` (integer): ID of the user.
-- **Example:**
-  ```bash
-  curl -X GET "http://localhost:5000/favorites?user_id=1"
-  ```
-  **Response:**
-  ```json
-  {
-    "favorites": [
-      { "city_name": "New York", "latitude": 40.7128, "longitude": -74.0060 },
-      { "city_name": "Los Angeles", "latitude": 34.0522, "longitude": -118.2437 }
-    ]
-  }
-  ```
-
-### 5. Get Current Weather
-- **Path:** `/weather`
-- **Request Type:** `GET`
-- **Purpose:** Fetch current weather for a specific city.
-- **Query Parameters:**
-  - `user_id` (integer): ID of the user.
-  - `city_name` (string): Name of the city.
-- **Response:**
-  ```json
-  {
-    "weather": {
-      "temperature": "float",
-      "humidity": "integer",
-      "wind_speed": "float"
+### Route: /favorites
+● Request Type: GET
+● Purpose: Retrieves all favorite cities for a user.
+● Query Parameters:
+  ○ user_id (Integer): ID of the user.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 200
+    ■ Content: { "favorites": [ { "city_name": "New York", "latitude": 40.7128, "longitude": -74.0060 } ] }
+● Example Request:
+```bash
+curl -X GET "http://localhost:5000/favorites?user_id=1"
+```
+● Example Response:
+```json
+{
+  "favorites": [
+    {
+      "city_name": "New York",
+      "latitude": 40.7128,
+      "longitude": -74.0060
     }
-  }
-  ```
+  ]
+}
+```
 
-### 6. Get Weather Forecast
-- **Path:** `/forecast`
-- **Request Type:** `GET`
-- **Purpose:** Fetch weather forecast for a specific city.
-- **Response:**
-  ```json
-  {
-    "forecast": [
-      { "day": "Monday", "temperature": "float", "conditions": "string" },
-      { "day": "Tuesday", "temperature": "float", "conditions": "string" }
-    ]
+### Route: /weather
+● Request Type: GET
+● Purpose: Fetches current weather for a specific city.
+● Query Parameters:
+  ○ user_id (Integer): ID of the user.
+  ○ city_name (String): Name of the city.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 200
+    ■ Content: { "weather": { "temperature": 22.5, "humidity": 60, "wind_speed": 5.2 } }
+● Example Request:
+```bash
+curl -X GET "http://localhost:5000/weather?user_id=1&city_name=New+York"
+```
+● Example Response:
+```json
+{
+  "weather": {
+    "temperature": 22.5,
+    "humidity": 60,
+    "wind_speed": 5.2
   }
-  ```
+}
+```
+
+### Route: /forecast
+● Request Type: GET
+● Purpose: Fetches weather forecast for a specific city.
+● Query Parameters:
+  ○ user_id (Integer): ID of the user.
+  ○ city_name (String): Name of the city.
+● Response Format: JSON
+  ○ Success Response Example:
+    ■ Code: 200
+    ■ Content: { "forecast": [ { "day": "Monday", "temperature": 20.5 }, { "day": "Tuesday", "temperature": 22.0 } ] }
+● Example Request:
+```bash
+curl -X GET "http://localhost:5000/forecast?user_id=1&city_name=New+York"
+```
+● Example Response:
+```json
+{
+  "forecast": [
+    { "day": "Monday", "temperature": 20.5 },
+    { "day": "Tuesday", "temperature": 22.0 }
+  ]
+}
+```
 
 ---
 
 ## Testing
 
 ### Unit Tests
-1. 
+Unit tests ensure that individual components of the application work as expected. They are located in the `tests` directory.
+
+#### Running Unit Tests
+1. Activate the virtual environment:
+   ```bash
+   source weather_app_venv/bin/activate
+   ```
+2. Run the tests using `pytest`:
+   ```bash
+   pytest tests
+   ```
 
 ### Smoke Tests
 Smoke tests verify that the critical paths of the application are functioning correctly. These include API endpoint tests and basic workflows.
