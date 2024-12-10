@@ -59,6 +59,15 @@ def db_check() -> Response:
 
 @app.route('/auth/create-account', methods=['POST'])
 def create_account():
+    """
+    Route to create a new user account.
+
+    Returns:
+        JSON response with a success message if the account is created, 
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or account creation fails.
+    """
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -75,6 +84,16 @@ def create_account():
 
 @app.route('/auth/login', methods=['POST'])
 def login():
+    """
+    Route to log in a user.
+
+    Returns:
+        JSON response with a success message and a session token if the 
+        login is successful, or an error message if credentials are invalid.
+    Raises:
+        400 error if required fields are missing.
+        401 error if the login credentials are invalid.
+    """
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -89,6 +108,15 @@ def login():
 
 @app.route('/auth/update-password', methods=['PUT'])
 def update_password():
+    """
+    Route to update a user's password.
+
+    Returns:
+        JSON response with a success message if the password is updated, 
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or the update fails.
+    """
     data = request.json
     username = data.get('username')
     new_password = data.get('new_password')
@@ -109,7 +137,15 @@ def update_password():
 
 @app.route('/favorites/add', methods=['POST'])
 def add_city():
-    """Add a city to the user's favorites."""
+    """
+    Route to add a city to the user's favorites.
+
+    Returns:
+        JSON response with a success message if the city is added, 
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or the city cannot be added.
+    """
     data = request.json
     user_id = data.get('user_id')
     city_name = data.get('city_name')
@@ -125,7 +161,15 @@ def add_city():
 
 @app.route('/favorites/remove', methods=['DELETE'])
 def remove_city():
-    """Remove a city from the user's favorites."""
+    """
+    Route to remove a city from the user's favorites.
+
+    Returns:
+        JSON response with a success message if the city is removed, 
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or the city cannot be removed.
+    """
     data = request.json
     user_id = data.get('user_id')
     city_name = data.get('city_name')
@@ -141,7 +185,15 @@ def remove_city():
 
 @app.route('/favorites', methods=['GET'])
 def get_all_favorites():
-    """Retrieve all favorite cities for a user."""
+    """
+    Route to retrieve all favorite cities for a user.
+
+    Returns:
+        JSON response containing the list of favorite cities if successful,
+        or an error message if something goes wrong.
+    Raises:
+        400 error if the required user_id field is missing or retrieval fails.
+    """
     user_id = request.args.get('user_id')
 
     if not user_id:
@@ -155,7 +207,15 @@ def get_all_favorites():
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
-    """Fetch current weather for a specific city."""
+    """
+    Route to fetch current weather for a specific city in a user's favorites.
+
+    Returns:
+        JSON response containing the weather data if successful,
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or if the city is not in the user's favorites.
+    """
     user_id = request.args.get('user_id')
     city_name = request.args.get('city_name')
 
@@ -177,7 +237,15 @@ def get_weather():
 
 @app.route('/forecast', methods=['GET'])
 def get_forecast():
-    """Fetch weather forecast for a specific city."""
+    """
+    Route to fetch the weather forecast for a specific city in a user's favorites.
+
+    Returns:
+        JSON response containing the forecast data if successful,
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or if the city is not in the user's favorites.
+    """
     user_id = request.args.get('user_id')
     city_name = request.args.get('city_name')
 
@@ -199,7 +267,15 @@ def get_forecast():
 
 @app.route('/air_pollution', methods=['GET'])
 def get_air_pollution():
-    """Fetch air pollution data for a specific city."""
+    """
+    Route to fetch air pollution data for a specific city in a user's favorites.
+
+    Returns:
+        JSON response containing the air pollution data if successful,
+        or an error message if something goes wrong.
+    Raises:
+        400 error if required fields are missing or if the city is not in the user's favorites.
+    """
     user_id = request.args.get('user_id')
     city_name = request.args.get('city_name')
 
@@ -221,7 +297,16 @@ def get_air_pollution():
     
 @app.route('/weather/all', methods=['GET'])
 def get_all_weather():
-    """Fetch current weather for all favorite cities for a user."""
+    """
+    Route to fetch current weather for all favorite cities of a user.
+
+    Returns:
+        JSON response containing the weather data for all favorite cities 
+        if successful, or an error message if something goes wrong.
+    Raises:
+        400 error if the required user_id field is missing.
+        404 error if no favorite cities are found for the user.
+    """
     user_id = request.args.get('user_id')
 
     if not user_id:
@@ -247,7 +332,16 @@ def get_all_weather():
 
 @app.route('/weather/map', methods=['GET'])
 def get_weather_map():
-    """Fetch specific weather criteria map tile for a city."""
+    """
+    Route to fetch a specific weather criteria map tile for a city.
+
+    Returns:
+        JSON response containing the map tile URL for the requested weather criteria 
+        if successful, or an error message if something goes wrong.
+    Raises:
+        400 error if required fields (user_id, city_name, or criteria) are missing 
+        or if the requested criteria is invalid.
+    """
     user_id = request.args.get('user_id')
     city_name = request.args.get('city_name')
     criteria = request.args.get('criteria')
