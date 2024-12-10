@@ -83,7 +83,7 @@ The application uses a centralized logging system for debugging and monitoring:
 ## API Routes
 
 ### Route: /api/health
-● Request Type: GET
+● Request Type: GET \
 ● Purpose: Checks if the service is running.
 ● Response Format: JSON
   ○ Success Response Example:
@@ -101,23 +101,23 @@ curl -X GET http://localhost:5000/api/health
 ```
 
 ### Route: /auth/create-account
-● Request Type: POST
-● Purpose: Creates a new user account with a username and password.
-● Request Body:
-  ○ username (String): User's chosen username.
-  ○ password (String): User's chosen password.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 201
-    ■ Content: { "message": "Account created successfully" }
-● Example Request:
+- Request Type: POST
+- Purpose: Creates a new user account with a username and password.
+- Request Body:
+    - username (String): User's chosen username.
+    - password (String): User's chosen password.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 201
+        - Content: { "message": "Account created successfully" }
+- Example Request:
 ```json
 {
   "username": "newuser123",
   "password": "securepassword"
 }
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "message": "Account created successfully"
