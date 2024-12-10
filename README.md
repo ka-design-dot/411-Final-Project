@@ -19,6 +19,8 @@ The Weather Dashboard is a web-based application designed to provide users with 
    - View detailed weather forecasts for saved locations, including temperature trends and precipitation chances.
 6. **Detect Air Pollution**
    - Retrieve air quality data, including pollution levels, for saved locations to stay informed about environmental conditions.
+7. **Weather Map**
+   - Visualize specific weather conditions (e.g., clouds, precipitation, sea level pressure, wind speed, temperature) for a saved location based on selected criteria.
 
 ---
 
