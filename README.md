@@ -83,17 +83,17 @@ The application uses a centralized logging system for debugging and monitoring:
 ## API Routes
 
 ### Route: /api/health
-● Request Type: GET \
-● Purpose: Checks if the service is running.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 200
-    ■ Content: { "status": "healthy" }
-● Example Request:
+- Request Type: GET \
+- Purpose: Checks if the service is running.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "status": "healthy" }
+- Example Request:
 ```bash
 curl -X GET http://localhost:5000/api/health
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "status": "healthy"
@@ -125,23 +125,23 @@ curl -X GET http://localhost:5000/api/health
 ```
 
 ### Route: /favorites/add
-● Request Type: POST
-● Purpose: Adds a city to a user’s favorites.
-● Request Body:
-  ○ user_id (Integer): ID of the user.
-  ○ city_name (String): Name of the city to be added.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 200
-    ■ Content: { "message": "City added to favorites" }
-● Example Request:
+- Request Type: POST
+- Purpose: Adds a city to a user’s favorites.
+- Request Body:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city to be added.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "message": "City added to favorites" }
+- Example Request:
 ```json
 {
   "user_id": 1,
   "city_name": "New York"
 }
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "message": "City added to favorites"
@@ -149,19 +149,19 @@ curl -X GET http://localhost:5000/api/health
 ```
 
 ### Route: /favorites
-● Request Type: GET
-● Purpose: Retrieves all favorite cities for a user.
-● Query Parameters:
-  ○ user_id (Integer): ID of the user.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 200
-    ■ Content: { "favorites": [ { "city_name": "New York", "latitude": 40.7128, "longitude": -74.0060 } ] }
-● Example Request:
+- Request Type: GET
+- Purpose: Retrieves all favorite cities for a user.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "favorites": [ { "city_name": "New York", "latitude": 40.7128, "longitude": -74.0060 } ] }
+- Example Request:
 ```bash
 curl -X GET "http://localhost:5000/favorites?user_id=1"
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "favorites": [
@@ -175,20 +175,20 @@ curl -X GET "http://localhost:5000/favorites?user_id=1"
 ```
 
 ### Route: /weather
-● Request Type: GET
-● Purpose: Fetches current weather for a specific city.
-● Query Parameters:
-  ○ user_id (Integer): ID of the user.
-  ○ city_name (String): Name of the city.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 200
-    ■ Content: { "weather": { "temperature": 22.5, "humidity": 60, "wind_speed": 5.2 } }
-● Example Request:
+- Request Type: GET
+- Purpose: Fetches current weather for a specific city.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "weather": { "temperature": 22.5, "humidity": 60, "wind_speed": 5.2 } }
+- Example Request:
 ```bash
 curl -X GET "http://localhost:5000/weather?user_id=1&city_name=New+York"
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "weather": {
@@ -200,20 +200,20 @@ curl -X GET "http://localhost:5000/weather?user_id=1&city_name=New+York"
 ```
 
 ### Route: /forecast
-● Request Type: GET
-● Purpose: Fetches weather forecast for a specific city.
-● Query Parameters:
-  ○ user_id (Integer): ID of the user.
-  ○ city_name (String): Name of the city.
-● Response Format: JSON
-  ○ Success Response Example:
-    ■ Code: 200
-    ■ Content: { "forecast": [ { "day": "Monday", "temperature": 20.5 }, { "day": "Tuesday", "temperature": 22.0 } ] }
-● Example Request:
+- Request Type: GET
+- Purpose: Fetches weather forecast for a specific city.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "forecast": [ { "day": "Monday", "temperature": 20.5 }, { "day": "Tuesday", "temperature": 22.0 } ] }
+- Example Request:
 ```bash
 curl -X GET "http://localhost:5000/forecast?user_id=1&city_name=New+York"
 ```
-● Example Response:
+- Example Response:
 ```json
 {
   "forecast": [
