@@ -15,10 +15,10 @@ The Weather Dashboard is a web-based application designed to provide users with 
    - Display all saved locations with their current weather conditions.
 4. **See All Favorites**
    - View a list of all saved locations for management or selection purposes.
-5. **Get Historical Weather for a Favorite**
-   - Retrieve weather data for past days for analysis or record-keeping.
-6. **Get Forecast for a Favorite**
+5. **Get Forecast for a Favorite**
    - View detailed weather forecasts for saved locations, including temperature trends and precipitation chances.
+6. **Detect Air Pollution**
+   - Retrieve air quality data, including pollution levels, for saved locations to stay informed about environmental conditions.
 
 ---
 
