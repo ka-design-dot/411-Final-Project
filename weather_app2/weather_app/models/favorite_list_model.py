@@ -11,8 +11,11 @@ class FavoriteListModel:
         """Initialize the model with in-memory storage for favorite cities."""
         self.favorites = {}  # Structure: {user_id: [{"city_name": str, "latitude": float, "longitude": float}]}
 
-    def add_city(self, user_id: int, city_name: str, latitude: float, longitude: float):
-        """Add a city to the user's favorites in memory."""
+    def add_city(self, user_id: int, city_name: str, api_key: str):
+        """
+        Add a city to the user's favorites in memory.
+        This now uses the geocoding API to determine the latitude and longitude from the city name.
+        """
         if user_id not in self.favorites:
             self.favorites[user_id] = []
 
@@ -21,6 +24,9 @@ class FavoriteListModel:
             if favorite["city_name"] == city_name:
                 logger.error("City %s already exists in favorites for user ID %d.", city_name, user_id)
                 raise ValueError(f"City {city_name} is already in favorites.")
+
+        # Get the coordinates from the geocoding API
+        latitude, longitude = self.get_city_coordinates(city_name, api_key)
 
         # Add the city to the favorites
         self.favorites[user_id].append({"city_name": city_name, "latitude": latitude, "longitude": longitude})
@@ -59,6 +65,39 @@ class FavoriteListModel:
         except requests.exceptions.RequestException as e:
             logger.error("API call failed: %s", e)
             raise RuntimeError(f"API call failed: {e}")
+    
+    def _make_geo_api_call(self, city_name: str, api_key: str) -> list:
+        """Helper function to make API calls to the geocoding endpoint."""
+        base_url = "http://api.openweathermap.org/geo/1.0"
+        url = f"{base_url}/direct"
+        params = {
+            "q": city_name,
+            "limit": 1,
+            "appid": api_key
+        }
+
+        try:
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            logger.info("Geocoding API call successful for city %s: %s", city_name, data)
+            return data
+        except requests.exceptions.RequestException as e:
+            logger.error("Geocoding API call failed: %s", e)
+            raise RuntimeError(f"Geocoding API call failed: {e}")
+
+    def get_city_coordinates(self, city_name: str, api_key: str):
+        """Get the latitude and longitude for a given city using the geocoding API."""
+        data = self._make_geo_api_call(city_name, api_key)
+        if not data:
+            logger.error("No coordinates found for city %s.", city_name)
+            raise ValueError(f"No coordinates found for city {city_name}.")
+        lat = data[0].get("lat")
+        lon = data[0].get("lon")
+        if lat is None or lon is None:
+            logger.error("Incomplete data returned for city %s.", city_name)
+            raise ValueError(f"Incomplete coordinate data for city {city_name}.")
+        return lat, lon
 
     def get_weather(self, user_id: int, city_name: str, api_key: str):
         """Fetch current weather for a specific city."""
