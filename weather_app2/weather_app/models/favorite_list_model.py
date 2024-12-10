@@ -128,35 +128,67 @@ class FavoriteListModel:
         logger.info("Retrieved weather for all favorites for user ID %d.", user_id)
         return weather_data
     
-    def get_weather_map(self, city_name: str, latitude: float, longitude: float, criteria: str, api_key: str) -> dict:
-        """Fetch specific weather information for a city based on given criteria."""
-        allowed_criteria = ["clouds", "precipitation", "sea_level_pressure", "wind_speed", "temperature"]
-        if criteria not in allowed_criteria:
-            raise ValueError(f"Invalid criteria: {criteria}. Allowed criteria are {allowed_criteria}.")
+    def get_weather_map(self, user_id: int, city_name: str, criteria: str, api_key: str) -> dict:
+        """
+        Fetch a weather layer tile for a city in the user's favorites based on the given criteria.
 
-        # Fetch current weather data for the city
-        weather_data = self._make_api_call(
-            "weather",
-            {"lat": latitude, "lon": longitude, "q": city_name},
-            api_key
-        )
+        Criteria to layer mapping:
+        - clouds -> clouds_new
+        - precipitation -> precipitation_new
+        - sea_level_pressure -> pressure_new
+        - wind_speed -> wind_new
+        - temperature -> temp_new
+        """
+        favorites = self.favorites.get(user_id, [])
+        for favorite in favorites:
+            if favorite["city_name"] == city_name:
+                allowed_criteria = ["clouds", "precipitation", "sea_level_pressure", "wind_speed", "temperature"]
+                if criteria not in allowed_criteria:
+                    logger.error("Invalid criteria %s requested for city %s by user ID %d.", criteria, city_name, user_id)
+                    raise ValueError(f"Invalid criteria: {criteria}. Allowed criteria are {allowed_criteria}.")
 
-        # Map the requested criteria to the relevant weather data
-        criteria_mapping = {
-            "clouds": weather_data.get("clouds", {}).get("all"),
-            "precipitation": weather_data.get("rain", {}).get("1h") or weather_data.get("snow", {}).get("1h"),
-            "sea_level_pressure": weather_data.get("main", {}).get("pressure"),
-            "wind_speed": weather_data.get("wind", {}).get("speed"),
-            "temperature": weather_data.get("main", {}).get("temp")
-        }
+                criteria_to_layer = {
+                    "clouds": "clouds_new",
+                    "precipitation": "precipitation_new",
+                    "sea_level_pressure": "pressure_new",
+                    "wind_speed": "wind_new",
+                    "temperature": "temp_new"
+                }
 
-        # Extract and return the data for the specified criteria
-        result = {criteria: criteria_mapping.get(criteria)}
-        if result[criteria] is None:
-            logger.warning("Data for criteria %s is not available for city %s.", criteria, city_name)
+                layer = criteria_to_layer[criteria]
 
-        logger.info("Weather map for %s (%s): %s", city_name, criteria, result)
-        return result
+                # Choose a zoom level. This can be adjusted as needed.
+                z = 5
+
+                # Convert latitude/longitude to tile coordinates for the chosen zoom level.
+                import math
+                latitude = favorite["latitude"]
+                longitude = favorite["longitude"]
+                lat_rad = math.radians(latitude)
+                n = 2 ** z  # number of tiles at this zoom level
+
+                x = (longitude + 180.0) / 360.0 * n
+                y = (1.0 - math.log(math.tan(lat_rad) + (1.0 / math.cos(lat_rad))) / math.pi) / 2.0 * n
+
+                # Convert to int and clamp to valid range [0, 2^z - 1]
+                x = int(min(max(x, 0), n - 1))
+                y = int(min(max(y, 0), n - 1))
+
+                tile_url = f"https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid={api_key}"
+
+                logger.info("Weather map tile URL for city %s (user ID %d, %s): %s", city_name, user_id, criteria, tile_url)
+
+                return {
+                    "criteria": criteria,
+                    "layer": layer,
+                    "zoom": z,
+                    "x": x,
+                    "y": y,
+                    "tile_url": tile_url
+                }
+
+        logger.error("City %s not found in favorites for user ID %d.", city_name, user_id)
+        raise ValueError(f"City {city_name} is not in favorites.")
     
     def get_forecast(self, user_id: int, city_name: str, api_key: str):
         """Fetch the weather forecast for a specific city."""
