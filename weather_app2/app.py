@@ -1,10 +1,111 @@
 
 from flask import Flask, request, jsonify
+from flask import Response, make_response
 from weather_app.models.favorite_list_model import FavoriteListModel
+from weather_app.utils.sql_utils import check_database_connection, check_table_exists
+from weather_app.models.user_model import UserModel
 
 app = Flask(__name__)
 favorites_model = FavoriteListModel()
-API_KEY = #"your_openweathermap_api_key"  # Replace with your actual API key
+user_model = UserModel()
+API_KEY =  "your_openweathermap_api_key"  # Replace with your actual API key
+
+###################################################################################################################
+
+
+###############################################################
+# HEALTHCHECKS
+###############################################################
+
+@app.route('/api/health', methods=['GET'])
+def healthcheck() -> Response:
+    """
+    Health check route to verify the service is running.
+
+    Returns:
+        JSON response indicating the health status of the service.
+    """
+    app.logger.info('Health check')
+    return make_response(jsonify({'status': 'healthy'}), 200)
+
+@app.route('/api/db-check', methods=['GET'])
+def db_check() -> Response:
+    """
+    Route to check if the database connection and meals table are functional.
+
+    Returns:
+        JSON response indicating the database health status.
+    Raises:
+        404 error if there is an issue with the database.
+    """
+    try:
+        app.logger.info("Checking database connection...")
+        check_database_connection()
+        app.logger.info("Database connection is OK.")
+        app.logger.info("Checking if meals table exists...")
+        check_table_exists("meals")
+        app.logger.info("meals table exists.")
+        return make_response(jsonify({'database_status': 'healthy'}), 200)
+    except Exception as e:
+        return make_response(jsonify({'error': str(e)}), 404)
+
+
+####################################################################################################################
+
+
+###############################################################
+# USERS
+###############################################################
+
+@app.route('/auth/create-account', methods=['POST'])
+def create_account():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    try:
+        user_model.create_account(username, password)
+        return jsonify({"message": "Account created successfully"}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    
+
+@app.route('/auth/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    if user_model.login(username, password):
+        # Generate and return a session token (implement token generation if needed)
+        return jsonify({"message": "Login successful", "token": "fake-token-for-now"}), 200
+    return jsonify({"error": "Invalid credentials"}), 401
+
+@app.route('/auth/update-password', methods=['PUT'])
+def update_password():
+    data = request.json
+    username = data.get('username')
+    new_password = data.get('new_password')
+
+    if not username or not new_password:
+        return jsonify({"error": "Username and new password are required"}), 400
+
+    try:
+        user_model.update_password(username, new_password)
+        return jsonify({"message": "Password updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+####################################################################################################################
+
+###############################################################
+# FAVORITE LIST MODEL 
+###############################################################
 
 @app.route('/favorites/add', methods=['POST'])
 def add_city():
