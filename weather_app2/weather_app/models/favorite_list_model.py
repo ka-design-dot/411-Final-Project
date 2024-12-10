@@ -118,3 +118,35 @@ class FavoriteListModel:
 
         logger.info("Weather map for %s (%s): %s", city_name, criteria, result)
         return result
+    
+    def get_forecast(self, user_id: int, city_name: str, api_key: str):
+        """Fetch the weather forecast for a specific city."""
+        favorites = self.favorites.get(user_id, [])
+        for favorite in favorites:
+            if favorite["city_name"] == city_name:
+                forecast_data = self._make_api_call(
+                    "forecast",
+                    {"lat": favorite["latitude"], "lon": favorite["longitude"]},
+                    api_key
+                )
+                logger.info("Retrieved forecast for city %s for user ID %d: %s", city_name, user_id, forecast_data)
+                return forecast_data
+
+        logger.error("City %s not found in favorites for user ID %d.", city_name, user_id)
+        raise ValueError(f"City {city_name} is not in favorites.")
+
+    def get_air_pollution(self, user_id: int, city_name: str, api_key: str):
+        """Fetch air pollution data for a city in the user's favorites."""
+        favorites = self.favorites.get(user_id, [])
+        for favorite in favorites:
+            if favorite["city_name"] == city_name:
+                air_pollution_data = self._make_api_call(
+                    "air_pollution",
+                    {"lat": favorite["latitude"], "lon": favorite["longitude"]},
+                    api_key
+                )
+                logger.info("Retrieved air pollution data for city %s for user ID %d: %s", city_name, user_id, air_pollution_data)
+                return air_pollution_data
+
+        logger.error("City %s not found in favorites for user ID %d.", city_name, user_id)
+        raise ValueError(f"City {city_name} is not in favorites.")

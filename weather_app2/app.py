@@ -155,7 +155,7 @@ def get_all_favorites():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/weather/current', methods=['GET'])
+@app.route('/weather', methods=['GET'])
 def get_weather():
     """Fetch current weather for a specific city."""
     user_id = request.args.get('user_id')
@@ -177,7 +177,7 @@ def get_weather():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/weather/forecast', methods=['GET'])
+@app.route('/forecast', methods=['GET'])
 def get_forecast():
     """Fetch weather forecast for a specific city."""
     user_id = request.args.get('user_id')
@@ -199,7 +199,7 @@ def get_forecast():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-@app.route('/weather/air_pollution', methods=['GET'])
+@app.route('/air_pollution', methods=['GET'])
 def get_air_pollution():
     """Fetch air pollution data for a specific city."""
     user_id = request.args.get('user_id')
