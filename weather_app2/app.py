@@ -247,7 +247,7 @@ def get_all_weather():
 
 @app.route('/weather/map', methods=['GET'])
 def get_weather_map():
-    """Fetch specific weather criteria for a city."""
+    """Fetch specific weather criteria map tile for a city."""
     user_id = request.args.get('user_id')
     city_name = request.args.get('city_name')
     criteria = request.args.get('criteria')
@@ -256,16 +256,9 @@ def get_weather_map():
         return jsonify({"error": "Missing required fields: user_id, city_name, or criteria"}), 400
 
     try:
-        # Validate user and city
-        favorites = favorites_model.get_all_favorites(int(user_id))
-        favorite = next((fav for fav in favorites if fav["city_name"] == city_name), None)
-        if not favorite:
-            raise ValueError(f"City {city_name} not in favorites.")
-
-        # Fetch specific weather criteria
-        weather_map = favorites_model.get_weather_map(
-            city_name, favorite["latitude"], favorite["longitude"], criteria, API_KEY
-        )
+        # Now we directly call the new get_weather_map() method from the model,
+        # which handles looking up the city in the user's favorites and returning the tile URL.
+        weather_map = favorites_model.get_weather_map(int(user_id), city_name, criteria, API_KEY)
         return jsonify({"weather_map": weather_map}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
