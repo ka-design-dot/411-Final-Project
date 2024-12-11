@@ -3,7 +3,7 @@ from favorite_list_model import FavoriteListModel
 
 app = Flask(__name__)
 favorites_model = FavoriteListModel()
-API_KEY = "3cbb6f2fd7081e9984bc34bafde8e143" #"your_openweathermap_api_key"  # Replace with your actual API key
+API_KEY = "your_openweathermap_api_key"  # Replace with your actual API key
 
 # @app.route('/favorites/add', methods=['POST'])
 # def add_city():
