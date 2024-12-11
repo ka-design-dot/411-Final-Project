@@ -1,8 +1,8 @@
 import logging
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils.sql_utils import get_db_connection
-from utils.logger import configure_logger
+from weather_app.utils.sql_utils import get_db_connection
+from weather_app.utils.logger import configure_logger
 
 logger = logging.getLogger(__name__)
 configure_logger(logger)

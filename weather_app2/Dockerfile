@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y sqlite3
 COPY ./sql/create_db.sh /app/sql/create_db.sh
 COPY ./sql/create_user_table.sql /app/sql/create_user_table.sql
 RUN chmod +x /app/sql/create_db.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Define a volume for persisting the database
 VOLUME ["/app/db"]
@@ -28,4 +29,4 @@ VOLUME ["/app/db"]
 EXPOSE 5000
 
 # Run the entrypoint script when the container launches
-CMD ["/app/entrypoint.sh"]
+CMD ["python", "app.py"]
