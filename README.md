@@ -1,25 +1,29 @@
 # Weather Dashboard Application
 
 ## Overview
-The Weather Dashboard is a web-based application designed to provide users with personalized weather information. Users can save favorite locations and easily access current, forecasted, and historical weather data. By leveraging the OpenWeatherMap API, the application delivers user-specific customization, making it easier to stay informed about weather conditions in areas of interest.
+Our Weather Dashboard is a web-based application designed to provide users with personalized weather information for cities that they have favorited. Users can save favorite locations and easily access current and forecasted weather data, along with air pollution levels and a weather map. By leveraging the OpenWeatherMap API, the application delivers user-specific customization, making it easier to stay informed about weather conditions in areas of interest.
 
 ---
 
 ## Features
 
-1. **Set Favorite Locations**
+1. **Account Management**
+   - Create new user accounts.
+   - Log in with a username and password.
+   - Update old passwords.
+2. **Set Favorite Locations**
    - Add and save favorite locations to a user’s profile for quick access.
-2. **Get Weather for a Favorite Location**
+3. **Get Current Weather for a Favorite Location**
    - Retrieve current weather details for a user’s saved location, including temperature, humidity, and wind speed.
-3. **View All Favorites with Current Weather**
+4. **View All Favorites with Current Weather**
    - Display all saved locations with their current weather conditions.
-4. **See All Favorites**
+5. **See All Favorites**
    - View a list of all saved locations for management or selection purposes.
-5. **Get Forecast for a Favorite**
+6. **Get Forecast for a Favorite**
    - View detailed weather forecasts for saved locations, including temperature trends and precipitation chances.
-6. **Detect Air Pollution**
+7. **Detect Air Pollution**
    - Retrieve air quality data, including pollution levels, for saved locations to stay informed about environmental conditions.
-7. **Weather Map**
+8. **Weather Map**
    - Visualize specific weather conditions (e.g., clouds, precipitation, sea level pressure, wind speed, temperature) for a saved location based on selected criteria.
 
 ---
@@ -100,6 +104,24 @@ curl -X GET http://localhost:5000/api/health
 }
 ```
 
+### Route: /api/db-check
+- Request Type: GET \
+- Purpose: Checks the database connection and verifies that the table exists.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "database_status": "healthy" }
+- Example Request:
+```bash
+curl -X GET http://localhost:5000/api/db-check
+```
+- Example Response:
+```json
+{
+  "database_status": "healthy"
+}
+```
+
 ### Route: /auth/create-account
 - Request Type: POST
 - Purpose: Creates a new user account with a username and password.
@@ -111,16 +133,71 @@ curl -X GET http://localhost:5000/api/health
         - Code: 201
         - Content: { "message": "Account created successfully" }
 - Example Request:
-```json
+```bash
 {
-  "username": "newuser123",
-  "password": "securepassword"
+curl -X POST http://localhost:5000/auth/create-account \
+-H "Content-Type: application/json" \
+-d '{"username":"newuser123","password":"securepassword"}'
 }
 ```
 - Example Response:
 ```json
 {
   "message": "Account created successfully"
+}
+```
+
+### Route: /auth/login
+- Request Type: POST \
+- Purpose: Logs in a user and returns a session token.
+- Response Format: JSON
+    - Request Body:
+      - username (String): User's chosen username.
+      - password (String): User's chosen password.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "message": "Login successful", "token": "fake-token-for-now"}
+- Example Request:
+```bash
+{
+curl -X POST http://localhost:5000/auth/login \
+-H "Content-Type: application/json" \
+-d '{"username":"newuser123","password":"securepassword"}'
+
+}
+```
+- Example Response:
+```json
+{
+  "message": "Login successful", "token": "fake-token-for-now"
+}
+```
+
+### Route: /auth/update-password
+- Request Type: PUT \
+- Purpose: Updates a user's password.
+- Response Format: JSON
+    - Request Body:
+      - username (String): User's chosen username.
+      - new_password (String): User's chosen new password.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "message": "Password updated successfully"}
+- Example Request:
+```bash
+{
+curl -X PUT http://localhost:5000/auth/update-password \
+-H "Content-Type: application/json" \
+-d '{"username":"newuser123","new_password":"newsecurepassword"}'
+
+}
+```
+- Example Response:
+```json
+{
+  "message": "Password updated successfully"
 }
 ```
 
@@ -135,16 +212,43 @@ curl -X GET http://localhost:5000/api/health
         - Code: 200
         - Content: { "message": "City added to favorites" }
 - Example Request:
-```json
+```bash
 {
-  "user_id": 1,
-  "city_name": "New York"
+curl -X POST http://localhost:5000/favorites/add \
+-H "Content-Type: application/json" \
+-d '{"user_id":1,"city_name":"New York"}'
 }
 ```
 - Example Response:
 ```json
 {
-  "message": "City added to favorites"
+  "message": "City New York added to favorites"
+}
+```
+
+### Route: /favorites/remove
+- Request Type: DELETE
+- Purpose: Removes a city from a user’s favorites.
+- Request Body:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city to be added.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "message": "City removed from favorites" }
+- Example Request:
+```bash
+{
+curl -X DELETE http://localhost:5000/favorites/remove \
+-H "Content-Type: application/json" \
+-d '{"user_id":1,"city_name":"New York"}'
+
+}
+```
+- Example Response:
+```json
+{
+  "message": "City New York removed from favorites"
 }
 ```
 
@@ -221,6 +325,80 @@ curl -X GET "http://localhost:5000/forecast?user_id=1&city_name=New+York"
     { "day": "Tuesday", "temperature": 22.0 }
   ]
 }
+```
+
+### Route: /air_pollution
+- Request Type: GET
+- Purpose: Fetches air pollution data for a specific city in a user's favorites.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "air_pollution": { "aqi": 2, "pm2_5": 12.3, "pm10": 25.4 } }
+- Example Request:
+```bash
+curl -X GET "http://localhost:5000/air_pollution?user_id=1&city_name=New+York"
+```
+- Example Response:
+```json
+{
+  "air_pollution": [
+    {"aqi": 2, "pm2_5": 12.3, "pm10": 25.4}
+  ]
+}
+```
+
+### Route: /weather/all
+- Request Type: GET
+- Purpose: Fetches current weather for all favorite cities of a user.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: {"all_weather": {"New York": {"temperature": 22.5,"humidity": 60,"wind_speed": 5.2},"Los Angeles": {"temperature": 25.1,"humidity": 50,"wind_speed": 3.8}}}
+- Example Request:
+```bash
+curl -X GET "http://localhost:5000/weather/all?user_id=1"
+```
+- Example Response:
+```json
+{
+  "all_weather": {
+    "New York": {
+      "temperature": 22.5,
+      "humidity": 60,
+      "wind_speed": 5.2
+    },
+    "Los Angeles": {
+      "temperature": 25.1,
+      "humidity": 50,
+      "wind_speed": 3.8
+    }
+  }
+}
+```
+
+### Route: /weather/map
+- Request Type: GET
+- Purpose: Fetches a specific weather criteria map tile for a city in a user's favorites.
+- Query Parameters:
+    - user_id (Integer): ID of the user.
+    - city_name (String): Name of the city.
+    - criteria (String): The type of weather map the user wishes to see (e.g., clouds_new, precipitation_new, pressure_new, wind_new, temp_new)
+- Response Format: JSON
+    - Success Response Example:
+        - Code: 200
+        - Content: { "weather_map": "https://tile.openweathermap.org/map/{criteria}/{z}/{x}/{y}.png?appid={API_KEY}" }
+- Example Request:
+```bash
+curl -X GET "http://localhost:5000/weather/map?user_id=1&city_name=New+York&criteria=clouds_new"
+```
+- Example Response:
+```json
+{ "weather_map": "https://tile.openweathermap.org/map/{criteria}/{z}/{x}/{y}.png?appid={API_KEY}" }
 ```
 
 ---
