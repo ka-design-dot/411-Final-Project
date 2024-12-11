@@ -134,11 +134,9 @@ curl -X GET http://localhost:5000/api/db-check
         - Content: { "message": "Account created successfully" }
 - Example Request:
 ```bash
-{
 curl -X POST http://localhost:5000/auth/create-account \
 -H "Content-Type: application/json" \
 -d '{"username":"newuser123","password":"securepassword"}'
-}
 ```
 - Example Response:
 ```json
@@ -160,12 +158,9 @@ curl -X POST http://localhost:5000/auth/create-account \
         - Content: { "message": "Login successful", "token": "fake-token-for-now"}
 - Example Request:
 ```bash
-{
 curl -X POST http://localhost:5000/auth/login \
 -H "Content-Type: application/json" \
 -d '{"username":"newuser123","password":"securepassword"}'
-
-}
 ```
 - Example Response:
 ```json
@@ -187,12 +182,9 @@ curl -X POST http://localhost:5000/auth/login \
         - Content: { "message": "Password updated successfully"}
 - Example Request:
 ```bash
-{
 curl -X PUT http://localhost:5000/auth/update-password \
 -H "Content-Type: application/json" \
 -d '{"username":"newuser123","new_password":"newsecurepassword"}'
-
-}
 ```
 - Example Response:
 ```json
@@ -213,11 +205,9 @@ curl -X PUT http://localhost:5000/auth/update-password \
         - Content: { "message": "City added to favorites" }
 - Example Request:
 ```bash
-{
 curl -X POST http://localhost:5000/favorites/add \
 -H "Content-Type: application/json" \
 -d '{"user_id":1,"city_name":"New York"}'
-}
 ```
 - Example Response:
 ```json
@@ -238,12 +228,9 @@ curl -X POST http://localhost:5000/favorites/add \
         - Content: { "message": "City removed from favorites" }
 - Example Request:
 ```bash
-{
 curl -X DELETE http://localhost:5000/favorites/remove \
 -H "Content-Type: application/json" \
 -d '{"user_id":1,"city_name":"New York"}'
-
-}
 ```
 - Example Response:
 ```json
